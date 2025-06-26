@@ -114,3 +114,27 @@ Fill Gantt Bars
         )
     )
 )
+
+Fill Gantt Highlight Indicator
+=LET(
+    date,
+    O$2,
+
+    IF(
+        date = "",
+        "",
+        IF(
+            date = globals.date_today,
+            "T",
+            IF(
+                IS_WEEKEND(date),
+                "W",
+                IF(
+                    IS_HOLIDAY(date),
+                    "H",
+                    ""
+                )
+            )
+        )
+    )
+)
