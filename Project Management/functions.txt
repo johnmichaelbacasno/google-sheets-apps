@@ -1,0 +1,47 @@
+-----------------
+GENERAL FUNCTIONS
+-----------------
+
+DAYS_DURATION(start_date, end_date)
+Count number of days from start date to end date
+=IF(OR(start_date = "", end_date = ""), "", ABS(end_date - start_date) + 1)
+
+DAYS_DIFFERENCE(start_date, end_date)
+Difference between two dates in days
+=IF(OR(start_date = "", end_date = ""), "", end_date - start_date)
+
+LABEL(value, unit_singular, unit_plural)
+Label a value with a units
+=LET(
+    unit,
+    IF(ABS(value) > 1, unit_plural, unit_singular),
+
+    IF(value = "", "", CONCATENATE(value, " ", unit))
+)
+
+IN_ARRAY(value, range_or_array)
+Check if value is in an array or range
+=COUNTIF(range_or_array, value) > 0
+
+----------------------
+APP-SPECIFIC FUNCTIONS
+----------------------
+
+IS_WEEKEND(date)
+Check if date is a weekend
+=NOT(IN_ARRAY(WEEKDAY(date), Settings!work_days.date))
+
+IS_HOLIDAY(date)
+Check if date is a holiday
+=IN_ARRAY(date, Settings!holidays.date)
+
+FILL_GANTT_DATE(current_date, exclude_weekends, exclude_holidays)
+Fill date for gantt
+=IF(
+    OR(
+        AND(exclude_weekends, IS_WEEKEND(current_date)),
+        AND(exclude_holidays, IS_HOLIDAY(current_date))
+    ),
+    FILL_GANTT_DATE(current_date + 1, exclude_weekends, exclude_holidays),
+    current_date
+)
