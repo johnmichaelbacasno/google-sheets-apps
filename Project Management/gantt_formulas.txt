@@ -1,0 +1,116 @@
+FORMULAS
+
+Fill First Gantt Start date
+=LET(
+    current_date,
+    gantt.start_date,
+
+    exclusion,
+    NOT(gantt.show_days_off),
+
+    IF(
+        OR(
+            current_date = "",
+            Settings!weekend.string = "1111111"
+        ),
+        "",
+        FILL_GANTT_DATE(current_date, exclusion, exclusion)
+    )
+)
+
+Fill Succeeding Gantt Start dates
+=LET(
+    current_date,
+    IF(M$2 = "", "", M$2 + 1),
+
+    exclusion,
+    NOT(gantt.show_days_off),
+
+    IF(
+        OR(
+            current_date = "",
+            Settings!weekend.string = "1111111"
+        ),
+        "",
+        FILL_GANTT_DATE(current_date, exclusion, exclusion)
+    )
+)
+
+Fill Gantt Week Days Initials
+=IF(M$2 = "", "", LEFT(TEXT(M2, "dddd")))
+
+Fill Gantt Week Month
+=IF(M$2 = "", "", CONCATENATE(UPPER(TEXT(M2, "mmmm")), " ", UPPER(TEXT(M2, "yyyy"))))
+
+Fill Gantt Bars
+=LET(
+    date,
+    O$2,
+
+    start_date,
+    $K4,
+
+    end_date,
+    $L4,
+
+    type,
+    $G4,
+
+    progress,
+    $I4,
+    
+    IF(
+        date = "",
+        "",
+        SWITCH(
+            type,
+            
+            types.type.phase,
+            IF(
+                AND(start_date <> "", end_date <> ""),
+                IF(
+                    ISBETWEEN(date, start_date, end_date),
+                    1,
+                    ""
+                ),
+                ""
+            ),
+            
+            types.type.task,
+            IF(
+                AND(start_date <> "", end_date <> ""),
+                IF(
+                    ISBETWEEN(date, start_date, end_date),
+                    1,
+                    ""
+                ),
+                ""
+            ),
+            
+            types.type.milestone,
+            IF(
+                end_date <> "",
+                IF(
+                    date = end_date,
+                    IF(
+                        progress = 1,
+                        gantt_symbols.milestone_completed,
+                        gantt_symbols.milestone_incomplete
+                    ),
+                    ""
+                ),
+                IF (
+                    AND(start_date <> "", date = start_date),
+                    IF(
+                        progress = 1,
+                        gantt_symbols.milestone_completed,
+                        gantt_symbols.milestone_incomplete
+                    ),
+                    ""
+                )
+            ),
+
+            ""
+        )
+    )
+)
