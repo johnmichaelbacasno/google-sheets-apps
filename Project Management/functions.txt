@@ -23,6 +23,31 @@ IN_ARRAY(value, range_or_array)
 Check if value is in an array or range
 =COUNTIF(range_or_array, value) > 0
 
+QUOTE(value)
+Add single quotes to a value
+="'" & value & "'"
+
+QUOTE_DATE(date)
+Add date quotes to a date
+="date '" & TEXT(date, "yyyy-mm-dd") & "'"
+
+COLOR_MAP(color_name)
+Map color name to equivalent hex code
+=SWITCH(
+    LOWER(color_name),
+    
+    "blue",   "#0DBAF1",
+    "green",  "#97D03A",
+    "purple", "#B588FF",
+    "red",    "#F07273",
+    "orange", "#F58926",
+    "indigo", "#6695FF",
+    "grey",   "#A9A9AA",
+    "yellow", "#DBC60D",
+    "pink",   "#FC7AA9",
+    "brown",  "#C7925D",
+)
+
 ----------------------
 APP-SPECIFIC FUNCTIONS
 ----------------------
