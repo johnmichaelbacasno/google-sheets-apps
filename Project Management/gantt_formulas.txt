@@ -60,7 +60,7 @@ Fill Gantt Bars
     $I4,
     
     IF(
-        date = "",
+        OR(date = "", AND(start_date = "", end_date = "")),
         "",
         SWITCH(
             type,
