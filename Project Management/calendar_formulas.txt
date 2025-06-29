@@ -1,0 +1,115 @@
+Get Month Number
+=IF(calendar.month = "", "", XMATCH(calendar.month, Settings!months.list))
+
+Get Start Date
+=IF(
+    OR(calendar.year = "", data.month = ""),
+    "",
+    DATE(calendar.year, data.month, 1)
+)
+
+Get Week Start Day
+=IF(calendar.week_start_day = "", "", XMATCH(calendar.week_start_day, Settings!week_days.list))
+
+Get Succeeding Week Days
+=LET(
+    previous_week_day_num,
+    F$4,
+
+    IF(
+        previous_week_day_num = "",
+        "",
+        IF(
+            previous_week_day_num = 7,
+            1,
+            previous_week_day_num + 1
+        )
+    )
+)
+
+Get Week Day Names
+=LET(
+    week_day_num,
+    F$4,
+
+    IF(
+        week_day_num = "",
+        "",
+        LET(
+            week_day_full_word,
+            INDEX(Settings!week_days.list, week_day_num),
+
+            UPPER(LEFT(week_day_full_word, 3))
+        )
+    )
+)
+
+Get Start Calendar Date
+=IF(
+    OR(data.start_date = "", data.week_start_day = ""),
+    "",
+    LET(
+        start_day,
+        WEEKDAY(data.start_date),
+
+        IF(
+            start_day < data.week_start_day,
+            data.start_date - start_day + data.week_start_day - 7,
+            data.start_date - start_day + data.week_start_day
+        )
+    )
+)
+
+Get Succeeding Calendar Dates
+=F7+1
+
+
+Query Calendar Events
+=LET(
+    date,
+    IF(F7 = "", "", QUOTE_DATE(F7)),
+
+    filter_owner,
+    IF(calendar.filter_owner = "", "", QUOTE(calendar.filter_owner)),
+
+    date_query,
+    IF(date = "", "", " O <= " & date & " AND P >= " & date),
+
+    filter_owner_query,
+    IF(filter_owner = "", "", " AND H = " & filter_owner),
+    
+    where_query,
+    " WHERE (" & date_query & filter_owner_query & ")",
+
+    query_string,
+    "SELECT G, K" & where_query & " LIMIT 5",
+
+    query_data,
+    QUERY(
+        List!$F$4:$W$25,
+        query_string
+    ),
+
+    IF(
+        ISERROR(query_data),
+        "",
+        BYROW(
+            query_data,
+            LAMBDA(
+                row,
+                LET(
+                    description,
+                    INDEX(row, 1),
+
+                    color,
+                    INDEX(row, 2),
+
+                    {
+                        SPARKLINE(1, {"charttype","bar"; "max", 1; "color1", COLOR_MAP(color)}),
+                        description
+                    }
+                )
+            )
+        )
+    )
+)
