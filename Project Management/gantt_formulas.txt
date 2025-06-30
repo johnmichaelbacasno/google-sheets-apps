@@ -138,3 +138,67 @@ Fill Gantt Highlight Indicator
         )
     )
 )
+
+Query Gantt Items
+=LET(
+    query_string,
+    "SELECT G, H, I, K, O, P, Q, T, V WHERE G <> ''",
+
+    query_data,
+    QUERY(
+        List!$F$4:$W$50,
+        query_string
+    ),
+
+    IF(
+        ISERROR(query_data),
+        "",
+        BYROW(
+            query_data,
+            LAMBDA(
+                row,
+                LET(
+                    description,
+                    INDEX(row, 1),
+
+                    owner,
+                    INDEX(row, 2),
+
+                    type,
+                    INDEX(row, 3),
+
+                    color,
+                    INDEX(row, 4),
+
+                    start_date,
+                    INDEX(row, 5),
+
+                    end_date,
+                    INDEX(row, 6),
+
+                    progress,
+                    INDEX(row, 7),
+
+                    duration,
+                    INDEX(row, 8),
+
+                    due_in,
+                    INDEX(row, 9),
+
+                    {
+                        IF(type = types.type.phase, "▾", ""),
+                        description,
+                        type,
+                        color,
+                        progress,
+                        owner,
+                        start_date,
+                        end_date,
+                        duration,
+                        due_in
+                    }
+                )
+            )
+        )
+    )
+)
