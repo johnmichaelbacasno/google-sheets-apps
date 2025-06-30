@@ -48,16 +48,16 @@ Fill Gantt Bars
     O$2,
 
     start_date,
-    $K4,
+    $K10,
 
     end_date,
-    $L4,
+    $L10,
 
     type,
-    $G4,
+    $G10,
 
     progress,
-    $I4,
+    $I10,
     
     IF(
         OR(date = "", AND(start_date = "", end_date = "")),
